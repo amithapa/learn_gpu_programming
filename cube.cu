@@ -1,13 +1,13 @@
 # include <stdio.h>
 
 __global__ void cube(float *d_in, float *d_out) {
-    int idx = threadIdx.x;
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
     float f = d_in[idx];
     d_out[idx] = f * f *f;
 }
 
 int main() {
-    const int ARRAY_SIZE = 164;
+    const int ARRAY_SIZE = 4000;
     const int ARRAY_BYTES = ARRAY_SIZE * sizeof(float);
 
     float h_in[ARRAY_SIZE];
@@ -25,8 +25,8 @@ int main() {
     cudaMalloc((void **) &d_out, ARRAY_BYTES);
 
     cudaMemcpy(d_in, h_in, ARRAY_BYTES, cudaMemcpyHostToDevice);
-
-    cube<<<1, ARRAY_SIZE>>>(d_in, d_out);
+    
+    cube<<<4, 1000>>>(d_in, d_out);
 
     cudaMemcpy(h_out, d_out, ARRAY_BYTES, cudaMemcpyDeviceToHost);
 
