@@ -1,9 +1,14 @@
 # include <stdio.h>
 
+__device__ float doTheCalculation(float f) {
+    return f * f * f;
+}
+
 __global__ void cube(float *d_in, float *d_out) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     float f = d_in[idx];
-    d_out[idx] = f * f *f;
+    //d_out[idx] = f * f *f;
+    d_out[idx] = doTheCalculation(f);
 }
 
 int main() {
